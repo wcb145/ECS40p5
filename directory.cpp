@@ -225,8 +225,8 @@ bool Directory::operator== (const Directory &rhs) const
 
 ostream& operator<< (ostream &os, Directory const &rhs)
 {
-  os << rhs.name << ' ' << rhs.time << ' ' << rhs.permissions << ' '
-     << rhs.subDirectoryCount << endl;
+  os << rhs.name << ' ' << rhs.time << ' ' << ' '
+     << rhs.subDirectoryCount << rhs.permissions << endl;
   
   for (int i = 0; i < rhs.subDirectoryCount; i++)
     os << *rhs.subDirectories[i];
@@ -235,7 +235,7 @@ ostream& operator<< (ostream &os, Directory const &rhs)
 
 istream& operator>> (istream &is, Directory &rhs)
 {
-  is >> rhs.name >> rhs.time >> rhs.permissions >> rhs.subDirectoryCount;
+  is >> rhs.name >> rhs.time >> rhs.subDirectoryCount >> rhs.permissions;
   is.ignore(10, '\n');
   
   rhs.subDirectories = new Directory*[rhs.subDirectoryCount];
