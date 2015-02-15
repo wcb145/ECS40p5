@@ -17,14 +17,14 @@ Directory::~Directory()
 {
   delete [] name;
  
-  for (int i = 0; i < subDirectoryCount; i++)
-    delete subDirectories[i];
+ // for (int i = 0; i < subDirectoryCount; i++)
+   // delete subDirectories[i];
 
-  delete [] subDirectories;
+  //delete [] subDirectories;
 }  // ~Directory()
 
 
-void Directory::addDirectory(const char *nam, short umask)
+/*void Directory::addDirectory(const char *nam, short umask)
 {
   Directory **subDirectoriesTemp = new Directory*[subDirectoryCount + 1];
 
@@ -36,6 +36,7 @@ void Directory::addDirectory(const char *nam, short umask)
   subDirectories[subDirectoryCount++] = new Directory(nam, umask, this);
   time.update();
 }  // addDirectory())
+*/
 
 Directory* Directory::cd(int argCount, const char *arguments[])
 {
@@ -194,7 +195,8 @@ void Directory::mkdir(int argCount, const char *arguments[], short umask)
     {
       if (permissions.isPermitted(WRITE_PERMISSIONS))
       {
-        addDirectory(arguments[argPos] , umask);
+        //addDirectory(arguments[argPos] , umask);
+        subDirectories+= new Directory(arguments[argPos], umask, this);
       }  // if there are write permissions
       else // no write permissions
         cout << "mkdir: cannot create directory ‘" << arguments[argPos] 
@@ -238,7 +240,7 @@ istream& operator>> (istream &is, Directory &rhs)
   is >> rhs.name >> rhs.time >> rhs.subDirectoryCount >> rhs.permissions;
   is.ignore(10, '\n');
   
-  rhs.subDirectories = new Directory*[rhs.subDirectoryCount];
+  //rhs.subDirectories = new Directory*[rhs.subDirectoryCount];
   
   for (int i = 0; i < rhs.subDirectoryCount; i++)
   {
@@ -248,3 +250,34 @@ istream& operator>> (istream &is, Directory &rhs)
   
   return is;
 }  // operator>>
+
+bool Directory::operator< (const Directory &rhs) const
+{
+  int length;
+
+  if (strlen(name) < strlen(rhs.name))
+    length = strlen(name);
+  
+  else // else
+    length = strlen(rhs.name);
+  
+  for (int i=0; i < length; i++)
+  {
+    if (name[i] < rhs.name[i])
+      return true;
+    
+    if (name[i] > rhs.name[i])
+      return false;
+  }// if two are the same comparing lengths
+ 
+  if (strlen(name) < strlen(rhs.name))
+    return true;
+  
+  if (strlen(name) > strlen(rhs.name))
+    return false;
+  
+  else 
+    return false;
+  
+    
+} // bool directory

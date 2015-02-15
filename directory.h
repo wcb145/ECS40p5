@@ -10,11 +10,12 @@ class Directory
 {
   char *name;
   Time time;
-  Directory **subDirectories;
+  //Directory **subDirectories;
+  LinkedList subDirectories;  // wills addition
   int subDirectoryCount;
   Directory *parent;
   Permissions permissions;
-  void addDirectory(const char *nam, short umask);
+  //void addDirectory(const char *nam, short umask);
   short checkOctals(const char *octals) const;
 public:
   Directory(const char *nam, short umask = 0, Directory *paren = NULL);
@@ -26,6 +27,7 @@ public:
   void mkdir(int argCount, const char *arguments[], short umask);
   void showPath() const;
   bool operator== (const Directory &rhs) const;
+  bool operator< (const Directory &rhs) const; // wills addition
   friend ostream& operator<< (ostream &os, Directory const &rhs);
   friend istream& operator>> (istream &is, Directory &rhs);
 };  // class Directory
