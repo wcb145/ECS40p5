@@ -9,6 +9,7 @@ class ListNode
 {
   Directory *data;
   ListNode *next;
+  ~ListNode();
   ListNode(Directory *d, ListNode *n);
   friend class LinkedList;    
 };  // class ListNode

@@ -9,6 +9,11 @@ ListNode::ListNode(Directory *d, ListNode *n) : data(d), next(n)
 
 } // ListNode constructor
 
+ListNode::~ListNode()
+{
+  delete data; //delete the directory
+}
+
 LinkedList::LinkedList()
 {
   head = NULL;
@@ -17,10 +22,11 @@ LinkedList::LinkedList()
 LinkedList::~LinkedList()
 {
   ListNode* prev = head;
-
-  while (!prev) 
+  ListNode* ptr;
+  
+  while (prev) 
   {
-    ListNode* ptr = prev->next;
+    ptr = prev->next;
     delete prev;
     prev = ptr;
   } // while()
