@@ -9,9 +9,9 @@ ListNode::ListNode(Directory *d, ListNode *n) : data(d), next(n)
 
 } // ListNode constructor
 
-LinkedList::LinkedList() : head(NULL)
+LinkedList::LinkedList()
 {
-
+  head = NULL;
 } // LinkedList constructor
 
 LinkedList::~LinkedList()

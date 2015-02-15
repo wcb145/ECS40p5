@@ -5,13 +5,12 @@
 using namespace std;
 
 Directory::Directory(const char *nam, short umask, Directory *paren)
-  : subDirectories(NULL), subDirectoryCount(0), parent(paren) 
+  : subDirectoryCount(0), parent(paren) 
  {
   name = new char[strlen(nam) + 1];
   strcpy(name, nam);
   permissions.set(0777, umask);
  }  // Directory())
-
 
 Directory::~Directory()
 {
@@ -197,6 +196,8 @@ void Directory::mkdir(int argCount, const char *arguments[], short umask)
       {
         //addDirectory(arguments[argPos] , umask);
         subDirectories+= new Directory(arguments[argPos], umask, this);
+        time.update();
+        subDirectoryCount++;
       }  // if there are write permissions
       else // no write permissions
         cout << "mkdir: cannot create directory ‘" << arguments[argPos] 
@@ -244,7 +245,8 @@ istream& operator>> (istream &is, Directory &rhs)
   
   for (int i = 0; i < rhs.subDirectoryCount; i++)
   {
-    rhs.subDirectories[i] = new Directory("Dummy", 0, &rhs);
+    //rhs.subDirectories[i] = new Directory("Dummy", 0, &rhs);
+    rhs.subDirectories += new Directory("Dummy", 0, &rhs);
     is >> *rhs.subDirectories[i];
   }  // for each subdirectory
   

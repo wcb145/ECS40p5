@@ -4,6 +4,7 @@
 #include "iostream"
 #include "permissions.h"
 #include "Time.h"
+#include "list.h"
 using namespace std;
 
 class Directory
