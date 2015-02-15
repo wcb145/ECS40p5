@@ -255,15 +255,20 @@ istream& operator>> (istream &is, Directory &rhs)
 
 bool Directory::operator< (const Directory &rhs) const
 {
+  if (strcmp(name, rhs.name) < 0)
+    return 1;
+  
+  if (strcmp(name, rhs.name) > 0)
+    return 0;
+  /*
   int length;
 
   if (strlen(name) < strlen(rhs.name))
     length = strlen(name);
-  
   else // else
     length = strlen(rhs.name);
   
-  for (int i=0; i < length; i++)
+  for (int i = 0; i < length; i++)
   {
     if (name[i] < rhs.name[i])
       return true;
@@ -277,9 +282,8 @@ bool Directory::operator< (const Directory &rhs) const
   
   if (strlen(name) > strlen(rhs.name))
     return false;
-  
-  else 
+  else // else
     return false;
-  
+  */
     
 } // bool directory

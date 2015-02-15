@@ -38,7 +38,7 @@ void LinkedList::operator+= (Directory* data)
 {
   ListNode *ptr = head, *prev = NULL;
   
-  while (ptr && ptr->data < data)
+  while (ptr && *ptr->data < *data)
   {
     prev = ptr;
     ptr = ptr->next;    
