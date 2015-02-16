@@ -11,43 +11,29 @@ Directory::Directory(const char *nam, short umask, Directory *paren)
   strcpy(name, nam);
   permissions.set(0777, umask);
  }  // Directory()
-/*
-Directory::Directory(const Directory& rhs)
+
+Directory::Directory(const Directory& rhs) 
+  : subDirectoryCount(rhs.subDirectoryCount), permissions(rhs.permissions),
+  parent(rhs.parent)
 {
+  
   name = new char[strlen(rhs.name) + 1];
   strcpy(name, rhs.name);
-  time = new Time;
-  time = rhs.time;
-  subDirectories = new LinkedList;
-  subDirectories = rhs.subDirectories;
-  subDirectoryCount = new int;
-  subDirectoryCount = rhs.subDirectoryCount;  
+  
+  for (int i = 0; i < subDirectoryCount; i++)
+  {
+    Directory *temp = rhs.subDirectories[i]; 
+    Directory *tempDir = new Directory(*temp);
+    tempDir->parent = this;
+    subDirectories += tempDir;
+  } // for
 } // copy constructor
-*/
+
 Directory::~Directory()
 {
   delete [] name;
- 
- // for (int i = 0; i < subDirectoryCount; i++)
-   // delete subDirectories[i];
 
-  //delete [] subDirectories;
 }  // ~Directory()
-
-
-/*void Directory::addDirectory(const char *nam, short umask)
-{
-  Directory **subDirectoriesTemp = new Directory*[subDirectoryCount + 1];
-
-  for (int i = 0; i < subDirectoryCount; i++)
-    subDirectoriesTemp[i] = subDirectories[i];
-
-  delete [] subDirectories;
-  subDirectories = subDirectoriesTemp;
-  subDirectories[subDirectoryCount++] = new Directory(nam, umask, this);
-  time.update();
-}  // addDirectory())
-*/
 
 Directory* Directory::cd(int argCount, const char *arguments[])
 {
@@ -86,6 +72,7 @@ Directory* Directory::cd(int argCount, const char *arguments[])
 void Directory::cp(int argCount, const char *arguments[])
 {
   Directory *source;
+  int match = 0;
   
   if (argCount == 1)
   {
@@ -101,7 +88,29 @@ void Directory::cp(int argCount, const char *arguments[])
     return;
   } // if no destination 
   
+  if (argCount > 3)
+  {
+    cout << "Too many operands" << endl;
+    cout << "Try 'cp --help' for more information." << endl;
+  } // if too many arguments
   
+  if (strcmp(arguments[1], arguments[2]) == 0)
+  {
+    cout << "cp: ‘" << arguments[1] << "’ and "
+      << "‘" << arguments[2] << "’ are the same file" << endl;
+  } // the source and destination are the same
+  
+  for (int i = 0; i < subDirectoryCount; i++)
+  {
+    if(*subDirectories[i] == Directory(arguments[1]))
+      match = 1;
+  } // for 
+  
+  if (!match)
+    cout << "cp: cannot stat ‘" << arguments[1] <<
+      "’: No such file or directory" << endl << 
+      "Try 'cp --help' for more information." << endl;
+
 } // cd command
 
 short Directory::checkOctals(const char *octals) const
@@ -273,11 +282,8 @@ istream& operator>> (istream &is, Directory &rhs)
   is >> rhs.name >> rhs.time >> rhs.subDirectoryCount >> rhs.permissions;
   is.ignore(10, '\n');
   
-  //rhs.subDirectories = new Directory*[rhs.subDirectoryCount];
-  
   for (int i = 0; i < rhs.subDirectoryCount; i++)
   {
-    //rhs.subDirectories[i] = new Directory("Dummy", 0, &rhs);
     rhs.subDirectories += new Directory("Dummy", 0, &rhs);
     is >> *rhs.subDirectories[i];
   }  // for each subdirectory
@@ -292,30 +298,4 @@ bool Directory::operator< (const Directory &rhs) const
   
   if (strcmp(name, rhs.name) > 0)
     return 0;
-  /*
-  int length;
-
-  if (strlen(name) < strlen(rhs.name))
-    length = strlen(name);
-  else // else
-    length = strlen(rhs.name);
-  
-  for (int i = 0; i < length; i++)
-  {
-    if (name[i] < rhs.name[i])
-      return true;
-    
-    if (name[i] > rhs.name[i])
-      return false;
-  }// if two are the same comparing lengths
- 
-  if (strlen(name) < strlen(rhs.name))
-    return true;
-  
-  if (strlen(name) > strlen(rhs.name))
-    return false;
-  else // else
-    return false;
-  */
-    
 } // bool directory

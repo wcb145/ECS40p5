@@ -20,12 +20,11 @@ class Directory
   short checkOctals(const char *octals) const;
 public:
   Directory(const char *nam, short umask = 0, Directory *paren = NULL);
-  //Directory(const Directory& rhs);
+  Directory(const Directory& rhs);
   ~Directory();
   Directory* cd(int argCount, const char *arguments[]);
   void cp(int argCount, const char *argument[]);
   void chmod(int argCount, const char *arguments[]);
-    // changes the permissions of the arguments
   void ls(int argCount, const char *arguments[]) const;
   void mkdir(int argCount, const char *arguments[], short umask);
   void showPath() const;

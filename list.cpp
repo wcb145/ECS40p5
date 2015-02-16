@@ -19,11 +19,6 @@ LinkedList::LinkedList()
   head = NULL;
 } // LinkedList constructor
 
-LinkedList::LinkedList(ListNode *rhs)
-{
-  //data = new Directory();
-} // LinkedList copy constructor
-
 LinkedList::~LinkedList()
 {
   ListNode* prev = head;

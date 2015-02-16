@@ -19,7 +19,6 @@ class LinkedList
   ListNode *head;
 public:
   LinkedList();
-  LinkedList(ListNode *rhs);
   ~LinkedList();
   void operator+= (Directory* data);
   Directory* operator[] (int index) const;//
