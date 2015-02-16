@@ -69,49 +69,75 @@ Directory* Directory::cd(int argCount, const char *arguments[])
   return this;
 }  // cd()
 
-void Directory::cp(int argCount, const char *arguments[])
+bool Directory::showcpWarnings(int argCount, const char *arguments[])
 {
-  Directory *source;
-  int match = 0;
   
   if (argCount == 1)
   {
     cout << "cp: missing operand\n";
     cout << "Try 'cp --help' for more information.\n";
-    return;
+    return 1;
   }  // if only "cp"
   
   if (argCount == 2)
   {
     cout << "cp: missing operand after ‘" << arguments[1] << "’\n";
     cout << "Try 'cp --help' for more information.\n";
-    return;
+    return 1;
   } // if no destination 
   
   if (argCount > 3)
   {
     cout << "Too many operands" << endl;
     cout << "Try 'cp --help' for more information." << endl;
+    return 1;
   } // if too many arguments
   
   if (strcmp(arguments[1], arguments[2]) == 0)
   {
     cout << "cp: ‘" << arguments[1] << "’ and "
       << "‘" << arguments[2] << "’ are the same file" << endl;
+    return 1;
   } // the source and destination are the same
   
-  for (int i = 0; i < subDirectoryCount; i++)
-  {
-    if(*subDirectories[i] == Directory(arguments[1]))
-      match = 1;
-  } // for 
+  return 0;
+} // show warnings
+
+
+void Directory::cp(int argCount, const char *arguments[])
+{
+  int match = 0, j;
   
+  if (showcpWarnings(argCount, arguments))
+    return;
+    
+  for (int i = 0; i < subDirectoryCount; i++)
+    if(*subDirectories[i] == Directory(arguments[1]))
+    {
+      j = i;
+      match = 1; 
+    } // if
   if (!match)
+  {
     cout << "cp: cannot stat ‘" << arguments[1] <<
       "’: No such file or directory" << endl << 
       "Try 'cp --help' for more information." << endl;
-
-} // cd command
+    return;
+  } // if no match found
+  
+  if(!(permissions.isPermitted(READ_PERMISSIONS)))
+  {
+    cout << "cp: cannot open ‘" << arguments[1] << "’ for reading: " <<
+      "Permission denied" << endl;
+    return;
+  } // if not permitted
+  Directory *copy = new Directory(*subDirectories[j]);
+  delete copy->name;
+  copy->name = new char[strlen(arguments[2]) + 1];
+  copy->name = strcpy(copy->name, arguments[2]);
+  subDirectories += copy;
+  subDirectoryCount++;
+} // cd command; this is exactly 30 lines!
 
 short Directory::checkOctals(const char *octals) const
 {

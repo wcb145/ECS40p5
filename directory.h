@@ -23,6 +23,7 @@ public:
   Directory(const Directory& rhs);
   ~Directory();
   Directory* cd(int argCount, const char *arguments[]);
+  bool showcpWarnings(int argCount, const char *arguments[]);
   void cp(int argCount, const char *argument[]);
   void chmod(int argCount, const char *arguments[]);
   void ls(int argCount, const char *arguments[]) const;
