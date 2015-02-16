@@ -59,7 +59,15 @@ Directory* LinkedList::operator[] (int index) const
     temp = temp->next;
   
   return temp->data;   
-} // operator
+} // const [] operator
 
-
-
+Directory* LinkedList::operator[] (int index)
+{
+  ListNode *temp;
+  temp = head;
+  
+  for (int i = 0; i < index; i++)
+    temp = temp->next;
+  
+  return temp->data;   
+} // non-const [] operator

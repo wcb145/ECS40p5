@@ -21,7 +21,8 @@ public:
   LinkedList();
   ~LinkedList();
   void operator+= (Directory* data);
-  Directory* operator[] (int index) const;//
+  Directory* operator[] (int index) const;
+  Directory* operator[] (int index);
 };
 #endif	// LIST_H
 
