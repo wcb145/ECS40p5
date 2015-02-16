@@ -19,6 +19,11 @@ LinkedList::LinkedList()
   head = NULL;
 } // LinkedList constructor
 
+LinkedList::LinkedList(ListNode *rhs)
+{
+  //data = new Directory();
+} // LinkedList copy constructor
+
 LinkedList::~LinkedList()
 {
   ListNode* prev = head;
@@ -60,4 +65,6 @@ Directory* LinkedList::operator[] (int index) const
   
   return temp->data;   
 } // operator
+
+
 

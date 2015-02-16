@@ -10,8 +10,20 @@ Directory::Directory(const char *nam, short umask, Directory *paren)
   name = new char[strlen(nam) + 1];
   strcpy(name, nam);
   permissions.set(0777, umask);
- }  // Directory())
-
+ }  // Directory()
+/*
+Directory::Directory(const Directory& rhs)
+{
+  name = new char[strlen(rhs.name) + 1];
+  strcpy(name, rhs.name);
+  time = new Time;
+  time = rhs.time;
+  subDirectories = new LinkedList;
+  subDirectories = rhs.subDirectories;
+  subDirectoryCount = new int;
+  subDirectoryCount = rhs.subDirectoryCount;  
+} // copy constructor
+*/
 Directory::~Directory()
 {
   delete [] name;
@@ -71,6 +83,26 @@ Directory* Directory::cd(int argCount, const char *arguments[])
   return this;
 }  // cd()
 
+void Directory::cp(int argCount, const char *arguments[])
+{
+  Directory *source;
+  
+  if (argCount == 1)
+  {
+    cout << "cp: missing operand\n";
+    cout << "Try 'cp --help' for more information.\n";
+    return;
+  }  // if only "cp"
+  
+  if (argCount == 2)
+  {
+    cout << "cp: missing operand after ‘" << arguments[1] << "’\n";
+    cout << "Try 'cp --help' for more information.\n";
+    return;
+  } // if no destination 
+  
+  
+} // cd command
 
 short Directory::checkOctals(const char *octals) const
 {

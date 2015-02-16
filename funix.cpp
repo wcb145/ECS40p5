@@ -100,7 +100,8 @@ int Funix::processCommand(char *command)  // returns 0 on proper exit
       case 2: currentDirectory->ls(argCount, arguments); break;
       case 3: currentDirectory->mkdir(argCount, arguments, umask); break;
       case 4: setUmask(argCount, arguments); break;
-      case 5: currentDirectory->chmod(argCount, arguments); break; 
+      case 5: currentDirectory->chmod(argCount, arguments); break;
+      case 6: currentDirectory->cp(argCount, arguments); break;
       default: cout << arguments[0] << ": Command not found.\n";
     }  // switch on commandNum   
   }  // if at least one argument
