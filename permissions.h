@@ -10,11 +10,15 @@ const int WRITE_PERMISSIONS = 2;
 
 class Permissions 
 {
+  static short umask;
   short permissions;
 public:
   bool isPermitted(short testedPermission) const;
   void set(short originalPermissions, short umask);
   void print() const;
+  void chmod(short newPerm);
+  static void setUmask (short newUmask);
+  static short getUmask ();
   friend ostream& operator<< (ostream &os, const Permissions &permissions);
   friend istream& operator>> (istream &is, Permissions &permissions);
 };  // class Permissions;

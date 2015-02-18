@@ -4,6 +4,23 @@
 #include "permissions.h"
 using namespace std;
 
+short Permissions::umask = 022;
+
+void Permissions::setUmask(short input)
+{
+  if (input)
+    umask = input;
+} // setUmask
+
+short Permissions::getUmask()
+{
+  return umask;
+} // getUmask()
+
+void Permissions::chmod(short newPerm)
+{
+  permissions = newPerm;
+} // chmod()
 
 bool Permissions::isPermitted(short testedPermission) const
 {

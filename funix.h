@@ -10,8 +10,6 @@ const int MAX_ARGUMENTS = 40;
 class Funix
 {
   Directory *currentDirectory;
-  short umask;
-
   int eXit(int argCount, const char *arguments[]);
     // checks "exit" command, returns 0 on proper exit
   void getCommand(char *command);  

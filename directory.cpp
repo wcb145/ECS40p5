@@ -192,7 +192,7 @@ void Directory::chmod(int argCount, const char *arguments[])
     for (j = 0; j < subDirectoryCount; j++)
       if (Directory(arguments[i]) == *subDirectories[j])
       {
-        subDirectories[j]->permissions.set(newPermissions, 0);
+        subDirectories[j]->permissions.chmod(newPermissions);
         break;
       }  // if matched name of directory with argument
     
@@ -295,7 +295,7 @@ bool Directory::operator== (const Directory &rhs) const
 ostream& operator<< (ostream &os, Directory const &rhs)
 {
   os << rhs.name << ' ' << rhs.time << ' ' << ' '
-     << rhs.subDirectoryCount << rhs.permissions << endl;
+     << rhs.subDirectoryCount << ' ' << rhs.permissions << endl;
   
   for (int i = 0; i < rhs.subDirectoryCount; i++)
     os << *rhs.subDirectories[i];

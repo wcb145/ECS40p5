@@ -5,12 +5,14 @@
 #include <fstream>
 #include "funix.h"
 #include "directory.h"
+#include "permissions.h"
 
 using namespace std;
 
-Funix::Funix() : umask(022)
+Funix::Funix()
 // creates currentDirectory, and sets umask and time
 {
+  short umask = Permissions::getUmask();
   currentDirectory = new Directory("/", umask, NULL); 
   ifstream inf("directories.txt");
   
@@ -71,6 +73,7 @@ void Funix::getCommand(char *command)  // writes prompt and reads command
 
 int Funix::processCommand(char *command)  // returns 0 on proper exit
 {
+  short umask = Permissions::getUmask();
   static const char *commands[] = {"cd", "exit", "ls", "mkdir", "umask", 
     "chmod", "cp"};
   const char *arguments[MAX_ARGUMENTS];
@@ -124,6 +127,7 @@ void Funix::run()
 void Funix::setUmask(int argCount, const char *arguments[])
   // checks "umask" command and executes it if it is proper
 {
+  short umask = Permissions::getUmask();
   short newUmask = 0;
   
   if (argCount == 1)
@@ -170,7 +174,8 @@ void Funix::writePrompt() const  // shows path and '#'
 
 ostream& operator<< (ostream &os, const Funix &rhs)
 {
-  os << rhs.umask << endl;
+  short umask = Permissions::getUmask();
+  os << umask << endl;
   os << *rhs.currentDirectory;
   return os;
 }  // operator<<
@@ -178,7 +183,9 @@ ostream& operator<< (ostream &os, const Funix &rhs)
 
 istream& operator>> (istream &is, Funix &rhs)
 {
-  is >> rhs.umask;
+  short umask;
+  is >> umask;
+  Permissions::setUmask(umask);
   is.ignore(10, '\n');
   is >> *rhs.currentDirectory;
   return is;
