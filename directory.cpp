@@ -1,4 +1,3 @@
-// Author: Sean Davis
 #include <cstring>
 #include <iostream>
 #include "directory.h"
@@ -13,8 +12,8 @@ Directory::Directory(const char *nam, short umask, Directory *paren)
  }  // Directory()
 
 Directory::Directory(const Directory& rhs) 
-  : subDirectoryCount(rhs.subDirectoryCount), permissions(rhs.permissions),
-  parent(rhs.parent)
+  : subDirectoryCount(rhs.subDirectoryCount), parent(rhs.parent),
+  permissions(rhs.permissions)
 {
   
   name = new char[strlen(rhs.name) + 1];
@@ -324,4 +323,6 @@ bool Directory::operator< (const Directory &rhs) const
   
   if (strcmp(name, rhs.name) > 0)
     return 0;
+
+  return 0;
 } // bool directory
