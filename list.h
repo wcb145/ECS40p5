@@ -4,25 +4,26 @@
 using namespace std;
 
 class Directory;
-class LinkedList;
+class List;
 class ListNode
 {
   Directory *data;
   ListNode *next;
   ~ListNode();
   ListNode(Directory *d, ListNode *n);
-  friend class LinkedList;    
+  friend class List;    
 };  // class ListNode
 
-class LinkedList
+class List
 {
   ListNode *head;
 public:
-  LinkedList();
-  ~LinkedList();
+  List();
+  List(const List& newHead);
+  ~List();
   void operator+= (Directory* data);
-  Directory* operator[] (int index) const;
+  const Directory* operator[] (int index)const;
   Directory* operator[] (int index);
-};
+}; // list class
 #endif	// LIST_H
 

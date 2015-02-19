@@ -12,22 +12,21 @@ class Directory
   char *name;
   Time time;
   //Directory **subDirectories;
-  LinkedList subDirectories;  // wills addition
+  List subDirectories;  // wills addition
   int subDirectoryCount;
   Directory *parent;
   Permissions permissions;
-  //void addDirectory(const char *nam, short umask);
-  short checkOctals(const char *octals) const;
+  //void addDirectory(const char *nam, short tempmask);
 public:
-  Directory(const char *nam, short umask = 0, Directory *paren = NULL);
+  Directory(const char *nam, short tempmask = 0, Directory *paren = NULL);
   Directory(const Directory& rhs);
   ~Directory();
   Directory* cd(int argCount, const char *arguments[]);
-  bool showcpWarnings(int argCount, const char *arguments[]);
+  bool hascpWarnings(int argCount, const char *arguments[]);
   void cp(int argCount, const char *argument[]);
   void chmod(int argCount, const char *arguments[]);
   void ls(int argCount, const char *arguments[]) const;
-  void mkdir(int argCount, const char *arguments[], short umask);
+  void mkdir(int argCount, const char *arguments[], short tempmask);
   void showPath() const;
   bool operator== (const Directory &rhs) const;
   bool operator< (const Directory &rhs) const; // wills addition

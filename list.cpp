@@ -12,14 +12,19 @@ ListNode::ListNode(Directory *d, ListNode *n) : data(d), next(n)
 ListNode::~ListNode()
 {
   delete data; //delete the directory
-}
+} // Destructor
 
-LinkedList::LinkedList()
+List::List()
 {
   head = NULL;
-} // LinkedList constructor
+} // List constructor
 
-LinkedList::~LinkedList()
+List::List(const List& newList)
+{
+
+} // List copy constructor
+
+List::~List()
 {
   ListNode* prev = head;
   ListNode* ptr;
@@ -32,9 +37,9 @@ LinkedList::~LinkedList()
   } // while()
   
   head = 0;
-} // LinkedList destructor!
+} // List destructor!
 
-void LinkedList::operator+= (Directory* data)
+void List::operator+= (Directory* data)
 {
   ListNode *ptr = head, *prev = NULL;
   
@@ -50,7 +55,7 @@ void LinkedList::operator+= (Directory* data)
     prev->next = new ListNode(data, ptr);
 }  // operator+=
 
-Directory* LinkedList::operator[] (int index) const
+const Directory* List::operator[] (int index)const
 {
   ListNode *temp;
   temp = head;
@@ -61,7 +66,7 @@ Directory* LinkedList::operator[] (int index) const
   return temp->data;   
 } // const [] operator
 
-Directory* LinkedList::operator[] (int index)
+Directory* List::operator[] (int index)
 {
   ListNode *temp;
   temp = head;

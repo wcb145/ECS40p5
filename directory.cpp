@@ -3,12 +3,12 @@
 #include "directory.h"
 using namespace std;
 
-Directory::Directory(const char *nam, short umask, Directory *paren)
+Directory::Directory(const char *nam, short tempmask, Directory *paren)
   : subDirectoryCount(0), parent(paren) 
  {
   name = new char[strlen(nam) + 1];
   strcpy(name, nam);
-  permissions.set(0777, umask);
+  permissions.set(0777, tempmask);
  }  // Directory()
 
 Directory::Directory(const Directory& rhs) 
@@ -21,7 +21,7 @@ Directory::Directory(const Directory& rhs)
   
   for (int i = 0; i < subDirectoryCount; i++)
   {
-    Directory *temp = rhs.subDirectories[i]; 
+    const Directory *temp = rhs.subDirectories[i]; 
     Directory *tempDir = new Directory(*temp);
     tempDir->parent = this;
     subDirectories += tempDir;
@@ -68,12 +68,12 @@ Directory* Directory::cd(int argCount, const char *arguments[])
   return this;
 }  // cd()
 
-bool Directory::showcpWarnings(int argCount, const char *arguments[])
+bool Directory::hascpWarnings(int argCount, const char *arguments[])
 {
   
   if (argCount == 1)
   {
-    cout << "cp: missing operand\n";
+    cout << "cp: missing file operand\n";
     cout << "Try 'cp --help' for more information.\n";
     return 1;
   }  // if only "cp"
@@ -102,20 +102,28 @@ bool Directory::showcpWarnings(int argCount, const char *arguments[])
   return 0;
 } // show warnings
 
-
 void Directory::cp(int argCount, const char *arguments[])
 {
   int match = 0, j;
   
-  if (showcpWarnings(argCount, arguments))
+  if (hascpWarnings(argCount, arguments))
     return;
     
   for (int i = 0; i < subDirectoryCount; i++)
-    if(*subDirectories[i] == Directory(arguments[1]))
+  {
+    if (*subDirectories[i] == Directory(arguments[1]))
     {
       j = i;
       match = 1; 
     } // if
+  
+    if (*subDirectories[i] == Directory(arguments[2]))
+    {
+      cout << "cp: '" << arguments[2] << "' already exists." << endl;
+      return;
+    } // if
+  } // for
+  
   if (!match)
   {
     cout << "cp: cannot stat ‘" << arguments[1] <<
@@ -124,44 +132,20 @@ void Directory::cp(int argCount, const char *arguments[])
     return;
   } // if no match found
   
-  if(!(permissions.isPermitted(READ_PERMISSIONS)))
+  if (!(permissions.isPermitted(READ_PERMISSIONS)))
   {
     cout << "cp: cannot open ‘" << arguments[1] << "’ for reading: " <<
       "Permission denied" << endl;
     return;
   } // if not permitted
+  
   Directory *copy = new Directory(*subDirectories[j]);
   delete copy->name;
   copy->name = new char[strlen(arguments[2]) + 1];
   copy->name = strcpy(copy->name, arguments[2]);
   subDirectories += copy;
   subDirectoryCount++;
-} // cd command; this is exactly 30 lines!
-
-short Directory::checkOctals(const char *octals) const
-{
-  short newPermissions = 0;
-  
-  if (strlen(octals) > 4)
-  {
-     cout << "chmod: invalid mode: ‘" << octals << "’\n";
-     cout << "Try 'chmod --help' for more information.\n";
-    return -1;
-  }  // if umask value too long.
-  
-  for (int i = 0; octals[i] != '\0'; i++ )
-    if (octals[i] < '0' || octals[i] > '7')
-    {
-      cout << "chmod: invalid mode: ‘" << octals << "’\n";
-      cout << "Try 'chmod --help' for more information.\n";
-      return -1;
-    }  // if incorrect octal
-    else  // valid octal digit
-      newPermissions = newPermissions * 8 + octals[i] - '0';
-  
-  return newPermissions;
-}  // checkOctals())
-
+} // cd command; this was exactly 30 lines!
 
 void Directory::chmod(int argCount, const char *arguments[])
  // changes the permissions of the arguments
@@ -182,7 +166,7 @@ void Directory::chmod(int argCount, const char *arguments[])
     return;
   }   // if only "chmod octals"
   
-  short newPermissions = checkOctals(arguments[1]);
+  short newPermissions = permissions.checkOctals(arguments[1]);
   
   if (newPermissions < 0)
     return;
@@ -235,7 +219,7 @@ void Directory::ls(int argCount, const char *arguments[])const
 }  // ls()
 
 
-void Directory::mkdir(int argCount, const char *arguments[], short umask)
+void Directory::mkdir(int argCount, const char *arguments[], short tempmask)
 {
   int i;
   
@@ -260,8 +244,7 @@ void Directory::mkdir(int argCount, const char *arguments[], short umask)
     {
       if (permissions.isPermitted(WRITE_PERMISSIONS))
       {
-        //addDirectory(arguments[argPos] , umask);
-        subDirectories+= new Directory(arguments[argPos], umask, this);
+        subDirectories += new Directory(arguments[argPos], tempmask, this);
         time.update();
         subDirectoryCount++;
       }  // if there are write permissions

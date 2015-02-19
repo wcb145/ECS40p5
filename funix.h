@@ -15,15 +15,13 @@ class Funix
   void getCommand(char *command);  
     // writes prompt and reads command
   int processCommand(char *command);  // returns 0 on proper exit
-  void setUmask(int argCount, const char *arguments[]);
-    // checks "umask" command and executes it if it is proper
   void writePrompt() const;  // shows path and '#'
 public:
   Funix(); 
   ~Funix();
   void run();  
     // reads and processes commands in a loop until proper exit
-    // creates currentDirectory, and sets umask 
+    // creates currentDirectory, and sets tempmask 
    friend ostream& operator<< (ostream &os, const Funix &rhs);
    friend istream& operator>> (istream &is, Funix &rhs);
  

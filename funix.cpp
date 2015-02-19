@@ -10,10 +10,10 @@
 using namespace std;
 
 Funix::Funix()
-// creates currentDirectory, and sets umask and time
+// creates currentDirectory, and sets tempmask and time
 {
-  short umask = Permissions::getUmask();
-  currentDirectory = new Directory("/", umask, NULL); 
+  short tempmask = Permissions::getUmask();
+  currentDirectory = new Directory("/", tempmask, NULL); 
   ifstream inf("directories.txt");
   
   if (inf)
@@ -73,7 +73,7 @@ void Funix::getCommand(char *command)  // writes prompt and reads command
 
 int Funix::processCommand(char *command)  // returns 0 on proper exit
 {
-  short umask = Permissions::getUmask();
+  short tempmask = Permissions::getUmask();
   static const char *commands[] = {"cd", "exit", "ls", "mkdir", "umask", 
     "chmod", "cp"};
   const char *arguments[MAX_ARGUMENTS];
@@ -101,8 +101,8 @@ int Funix::processCommand(char *command)  // returns 0 on proper exit
               break;
       case 1: return eXit(argCount, arguments);
       case 2: currentDirectory->ls(argCount, arguments); break;
-      case 3: currentDirectory->mkdir(argCount, arguments, umask); break;
-      case 4: setUmask(argCount, arguments); break;
+      case 3: currentDirectory->mkdir(argCount, arguments, tempmask); break;
+      case 4: Permissions::setUmask(argCount, arguments); break;
       case 5: currentDirectory->chmod(argCount, arguments); break;
       case 6: currentDirectory->cp(argCount, arguments); break;
       default: cout << arguments[0] << ": Command not found.\n";
@@ -123,48 +123,6 @@ void Funix::run()
     getCommand(command);
 }  // run()
 
-
-void Funix::setUmask(int argCount, const char *arguments[])
-  // checks "umask" command and executes it if it is proper
-{
-  short umask = Permissions::getUmask();
-  short newUmask = 0;
-  
-  if (argCount == 1)
-  {
-    cout << oct << umask << dec << endl;
-    return;
-  }  // if only "umask" on commandline
-  
-  if (argCount != 2)
-  {
-    cout << "umask: Too many arguments.\n";
-    return;
-  }  // if more than 2 arguments
-  
-  
-  if (strlen(arguments[1]) > 3)
-  {
-    cout << "umask: Improper mask.\n";
-    return;
-  }  // if umask value too long.
-  
-  for (int i = 0; arguments[1][i] != '\0'; i++ )
-  {
-    if (arguments[1][i] < '0' || arguments[1][i] > '7')
-    {
-      cout << "umask: Improper mask.\n";
-      return;
-    }  // if incorrect octal
-    else  // valid octal digit
-      newUmask = newUmask * 8 + arguments[1][i] - '0';
-  }   // for each digit in argument
-  
-  umask = newUmask;
-}  // umask()
-
-
-
 void Funix::writePrompt() const  // shows path and '#'
 {
   currentDirectory->showPath();
@@ -174,8 +132,8 @@ void Funix::writePrompt() const  // shows path and '#'
 
 ostream& operator<< (ostream &os, const Funix &rhs)
 {
-  short umask = Permissions::getUmask();
-  os << umask << endl;
+  short tempmask = Permissions::getUmask();
+  os << tempmask << endl;
   os << *rhs.currentDirectory;
   return os;
 }  // operator<<
@@ -183,9 +141,9 @@ ostream& operator<< (ostream &os, const Funix &rhs)
 
 istream& operator>> (istream &is, Funix &rhs)
 {
-  short umask;
-  is >> umask;
-  Permissions::setUmask(umask);
+  short tempmask;
+  is >> tempmask;
+  Permissions::putUmask(tempmask);
   is.ignore(10, '\n');
   is >> *rhs.currentDirectory;
   return is;

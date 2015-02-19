@@ -2,15 +2,56 @@
 
 #include <iostream>
 #include "permissions.h"
+#include <cstring>
 using namespace std;
 
 short Permissions::umask = 022;
 
-void Permissions::setUmask(short input)
+void Permissions::putUmask(short input)
 {
   if (input)
     umask = input;
-} // setUmask
+} // putUmask
+
+
+void Permissions::setUmask(int argCount, const char *arguments[])
+  // checks "umask" command and executes it if it is proper
+{
+  short umask = getUmask();
+  short newUmask = 0;
+  
+  if (argCount == 1)
+  {
+    cout << oct << umask << dec << endl;
+    return;
+  }  // if only "umask" on commandline
+  
+  if (argCount != 2)
+  {
+    cout << "umask: Too many arguments.\n";
+    return;
+  }  // if more than 2 arguments
+  
+  
+  if (strlen(arguments[1]) > 3)
+  {
+    cout << "umask: Improper mask.\n";
+    return;
+  }  // if umask value too long.
+  
+  for (int i = 0; arguments[1][i] != '\0'; i++ )
+  {
+    if (arguments[1][i] < '0' || arguments[1][i] > '7')
+    {
+      cout << "umask: Improper mask.\n";
+      return;
+    }  // if incorrect octal
+    else  // valid octal digit
+      newUmask = newUmask * 8 + arguments[1][i] - '0';
+  }   // for each digit in argument
+  
+  putUmask(newUmask);
+}  // umask()
 
 short Permissions::getUmask()
 {
@@ -33,6 +74,29 @@ void Permissions::set(short originalPermissions, short umask)
   permissions = originalPermissions & ~umask;
 }  // set())
 
+short Permissions::checkOctals(const char *octals)
+{
+  short newPermissions = 0;
+  
+  if (strlen(octals) > 4)
+  {
+     cout << "chmod: invalid mode: ‘" << octals << "’\n";
+     cout << "Try 'chmod --help' for more information.\n";
+    return -1;
+  }  // if umask value too long.
+  
+  for (int i = 0; octals[i] != '\0'; i++ )
+    if (octals[i] < '0' || octals[i] > '7')
+    {
+      cout << "chmod: invalid mode: ‘" << octals << "’\n";
+      cout << "Try 'chmod --help' for more information.\n";
+      return -1;
+    }  // if incorrect octal
+    else  // valid octal digit
+      newPermissions = newPermissions * 8 + octals[i] - '0';
+  
+  return newPermissions;
+}  // checkOctals())
 
 void Permissions::print() const
 {
